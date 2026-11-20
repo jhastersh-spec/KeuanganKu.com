@@ -1,0 +1,688 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KeuanganKu</title>
+<style>
+*{box-sizing:border-box}
+:root{--blue:#3867f4;--navy:#101d3a;--green:#0b9c70;--red:#e34d5c;--ink:#172033;--muted:#8290a5}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#eef3ff 0%,#f8fafc 55%,#edf8f5 100%);color:var(--ink);min-height:100vh}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 8% 12%,#3867f418,transparent 24%),radial-gradient(circle at 92% 85%,#0b9c7012,transparent 26%);z-index:-1}
+header{background:linear-gradient(120deg,#101d3a,#1c3670);color:white;padding:20px 6%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 24px #101d3a18}
+header h2{margin:0;color:#fff;letter-spacing:-.5px}
+header span{color:#72a0ff}
+#tanggalHeader{background:#ffffff12;padding:8px 12px;border:1px solid #ffffff20;border-radius:99px;font-size:13px}
+main{max-width:1150px;margin:30px auto;padding:0 18px}
+h1{font-size:28px;letter-spacing:-.6px;margin-bottom:5px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;margin:4px 0 20px;padding:0 2px}
+.hero p{margin:8px 0 0}
+.hero-badge{background:#ffffffcc;border:1px solid #fff;color:#526078;padding:9px 13px;border-radius:99px;font-size:12px;box-shadow:0 8px 20px #20366b10}
+.muted{color:var(--muted);font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.card{background:#ffffffed;padding:20px;border-radius:18px;box-shadow:0 10px 30px #20366b12;border:1px solid #ffffff;margin-bottom:15px}
+.card h3{font-size:14px;color:#8290a5;margin:0}
+.amount{font-size:23px;font-weight:800;margin-top:12px;letter-spacing:-.5px}
+.cards .card:nth-child(1){border-top:4px solid #3867f4}
+.cards .card:nth-child(2){border-top:4px solid var(--green)}
+.cards .card:nth-child(3){border-top:4px solid var(--red)}
+.cards .card:nth-child(4){border-top:4px solid #8b5cf6}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.layout{display:grid;grid-template-columns:350px 1fr;gap:15px}
+input,select{width:100%;padding:12px 13px;border:1px solid #dce3ed;border-radius:10px;margin:7px 0 13px;font-size:14px;background:#fff;color:var(--ink);outline:none;transition:.2s}
+input:focus,select:focus{border-color:#3867f4;box-shadow:0 0 0 4px #3867f41a}
+#nominal{font-size:18px;font-weight:bold;letter-spacing:.3px}
+label{font-size:13px;font-weight:700}
+button,.upload{border:0;background:linear-gradient(135deg,#3867f4,#5a7ff4);color:white;padding:11px 15px;border-radius:10px;cursor:pointer;font-weight:700;box-shadow:0 6px 14px #3867f42b;transition:.18s}
+button:hover{transform:translateY(-1px);box-shadow:0 9px 18px #3867f438}
+button:active{transform:translateY(0)}
+.secondary{background:#edf2ff;color:#3158d5;box-shadow:none}
+.delete{background:#fff0f0;color:#d33;box-shadow:none;padding:8px 10px}
+.full{width:100%}
+.tabs{display:flex;gap:8px;margin:15px 0;padding:4px;background:#f0f3f9;border-radius:12px}
+.tabs button{flex:1;background:transparent;color:#526078;box-shadow:none}
+.tabs button.active{background:linear-gradient(135deg,#3867f4,#5a7ff4);color:white;box-shadow:0 5px 12px #3867f42b}
+table{width:100%;border-collapse:collapse;min-width:550px}
+th,td{padding:12px 8px;text-align:left;border-bottom:1px solid #edf0f5;font-size:13px}
+th{color:#8290a5}
+tbody tr{transition:.15s}
+tbody tr:hover{background:#f8faff}
+.tablebox{overflow-x:auto}
+.chart{height:13px;background:#e9edf4;border-radius:20px;overflow:hidden;margin:10px 0}
+.chart div{height:100%;border-radius:20px;transition:width .5s ease}
+.import{background:linear-gradient(135deg,#f6f8ff,#fafdff);border:1px dashed #aabce8;padding:15px;border-radius:13px;margin-top:20px}
+.notice{background:linear-gradient(135deg,#fff7e6,#fffaf0);padding:14px 16px;border-radius:12px;font-size:12px;color:#795b16;margin-top:20px;border:1px solid #f2dfae}
+.sync-status{margin-top:10px;font-size:12px}
+.sync-status.success{color:var(--green)}
+.sync-status.error{color:#d33}
+.reminder-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.reminder-grid input{margin-bottom:8px}
+.reminder-actions{display:flex;gap:8px}
+.reminder-actions button{flex:1}
+.danger-btn{background:#fff0f0;color:#d33;box-shadow:none}
+.reminder-status{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:#edf7f4;color:#08785a;font-size:12px}
+.reminder-status.off{background:#f1f3f7;color:#68758a}
+.saving-box{margin-top:12px;padding-top:12px;border-top:1px solid #dfe6f2}
+#tabunganNominal{font-size:16px;font-weight:bold}
+.toast{position:fixed;right:20px;bottom:20px;max-width:320px;padding:14px 16px;border-radius:14px;background:#101d3a;color:white;box-shadow:0 14px 35px #101d3a35;transform:translateY(120px);opacity:0;transition:.35s;z-index:20}
+.toast.show{transform:translateY(0);opacity:1}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}
+@media(max-width:450px){header{padding:18px}header h2{font-size:20px}#tanggalHeader{font-size:11px}.amount{font-size:18px}.card{padding:14px}main{margin-top:20px;padding:0 12px}.hero{align-items:flex-start}.hero-badge{display:none}.reminder-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>Keuangan<span>Ku.</span></h2>
+  <div id="tanggalHeader"></div>
+</header>
+
+<main>
+<div class="hero">
+ <div>
+  <h1>Dashboard Keuangan</h1>
+  <p class="muted">Kelola semua pemasukan dan pengeluaranmu.</p>
+ </div>
+ <div class="hero-badge" id="summaryBadge">Ringkasan keuangan hari ini</div>
+</div>
+
+<div class="cards">
+ <div class="card">
+  <h3>Total Saldo</h3>
+  <div class="amount" id="saldo">Rp0</div>
+ </div>
+ <div class="card">
+  <h3>Uang Masuk</h3>
+  <div class="amount green" id="masuk">Rp0</div>
+ </div>
+ <div class="card">
+  <h3>Uang Keluar</h3>
+  <div class="amount red" id="keluar">Rp0</div>
+ </div>
+ <div class="card">
+  <h3>Jumlah Transaksi</h3>
+  <div class="amount" id="jumlah">0</div>
+ </div>
+</div>
+
+<div class="layout">
+
+<div class="card">
+<h3>Tambah Transaksi</h3>
+
+<div class="tabs">
+<button id="btnMasuk" class="active" onclick="ubahJenis('masuk')">Uang Masuk</button>
+<button id="btnKeluar" onclick="ubahJenis('keluar')">Uang Keluar</button>
+</div>
+
+<form id="form">
+<label>Nominal</label>
+<input type="text" id="nominal" inputmode="numeric" autocomplete="off" placeholder="Contoh: 50.000" required>
+
+<label>Kategori</label>
+<select id="kategori">
+<option>Gaji</option>
+<option>Transfer</option>
+<option>Uang Jajan</option>
+<option>Makanan</option>
+<option>Belanja</option>
+<option>Transportasi</option>
+<option>Tagihan</option>
+<option>Pendidikan</option>
+<option>Lainnya</option>
+</select>
+
+<label>Keterangan</label>
+<input type="text" id="keterangan" placeholder="Keterangan transaksi">
+
+<label>Sumber Dana</label>
+<select id="sumber">
+<option>Tunai</option>
+<option>DANA</option>
+<option>Bank</option>
+<option>Lainnya</option>
+</select>
+
+<label>Tanggal</label>
+<input type="date" id="tanggal" required>
+
+<button class="full" type="submit">Simpan Transaksi</button>
+</form>
+
+<div class="import">
+<h3>Import Riwayat DANA</h3>
+<p class="muted">Upload file CSV riwayat transaksi DANA.</p>
+<input type="file" id="fileCSV" accept=".csv">
+<button class="full" onclick="importDANA()">Import Transaksi</button>
+<p class="muted" id="statusImport"></p>
+</div>
+
+<div class="import">
+<h3>Sinkronisasi Otomatis DANA</h3>
+<p class="muted">Gunakan endpoint backend aman yang terhubung ke API DANA Bisnis.</p>
+<label>URL endpoint sinkronisasi</label>
+<input type="url" id="danaEndpoint" placeholder="https://domainanda.com/api/dana/sync">
+<button class="full" onclick="sinkronDANA()">Sinkronkan Sekarang</button>
+<p class="muted sync-status" id="statusSinkron"></p>
+</div>
+
+<div class="import">
+<h3>Pengingat Catatan Keuangan</h3>
+<p class="muted">Aktifkan pengingat harian saat halaman ini dibuka.</p>
+<div class="reminder-grid">
+ <div>
+  <label>Waktu</label>
+  <input type="time" id="reminderTime" value="20:00">
+ </div>
+ <div>
+  <label>Pesan</label>
+  <input type="text" id="reminderMessage" placeholder="Catat transaksi hari ini">
+ </div>
+</div>
+<div class="reminder-actions">
+ <button onclick="aktifkanPengingat()">Aktifkan</button>
+ <button class="danger-btn" onclick="nonaktifkanPengingat()">Nonaktifkan</button>
+</div>
+<p class="reminder-status off" id="reminderStatus">Pengingat belum aktif.</p>
+
+<div class="saving-box">
+ <h3 style="margin:0 0 4px">Pengingat Isi Tabungan</h3>
+ <p class="muted">Ingatkan untuk menyisihkan uang tabungan.</p>
+ <div class="reminder-grid">
+  <div>
+   <label>Waktu</label>
+   <input type="time" id="tabunganTime" value="21:00">
+  </div>
+  <div>
+   <label>Nominal Tabungan</label>
+   <input type="text" id="tabunganNominal" inputmode="numeric" placeholder="Contoh: 50.000">
+  </div>
+ </div>
+ <div class="reminder-actions">
+  <button onclick="aktifkanPengingatTabungan()">Aktifkan Tabungan</button>
+  <button class="danger-btn" onclick="nonaktifkanPengingatTabungan()">Nonaktifkan</button>
+ </div>
+ <p class="reminder-status off" id="tabunganStatus">Pengingat tabungan belum aktif.</p>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Riwayat Transaksi</h3>
+
+<input id="cari" placeholder="Cari transaksi..." oninput="tampilkan()">
+
+<select id="filter" onchange="tampilkan()">
+<option value="semua">Semua Transaksi</option>
+<option value="masuk">Uang Masuk</option>
+<option value="keluar">Uang Keluar</option>
+</select>
+
+<div class="tablebox">
+<table>
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Keterangan</th>
+<th>Sumber</th>
+<th>Nominal</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="riwayat"></tbody>
+</table>
+</div>
+<p id="kosong" class="muted">Belum ada transaksi.</p>
+
+<br>
+<button class="secondary" onclick="exportCSV()">Export Excel/CSV</button>
+<button class="secondary" onclick="backup()">Backup JSON</button>
+</div>
+</div>
+
+<div class="card">
+<h3>Grafik Keuangan</h3>
+<p class="muted">Perbandingan pemasukan dan pengeluaran bulan ini.</p>
+
+<p class="green">Pemasukan: <b id="grafikMasuk">Rp0</b></p>
+<div class="chart"><div id="barMasuk" style="background:#0b9c70;width:0%"></div></div>
+
+<p class="red">Pengeluaran: <b id="grafikKeluar">Rp0</b></p>
+<div class="chart"><div id="barKeluar" style="background:#e34d5c;width:0%"></div></div>
+</div>
+
+<div class="notice">
+<b>Informasi DANA:</b> Sinkronisasi otomatis harus dijalankan melalui backend/server untuk menjaga API key dan secret. Jangan memasukkan PIN, password, OTP, atau secret DANA ke halaman ini.
+</div>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("keuanganku") || "[]");
+let jenis = "masuk";
+
+const uang = n => new Intl.NumberFormat("id-ID",{
+ style:"currency",currency:"IDR",maximumFractionDigits:0
+}).format(n);
+
+const el = id => document.getElementById(id);
+
+el("tanggalHeader").textContent = new Date().toLocaleDateString("id-ID",{
+ day:"numeric",month:"long",year:"numeric"
+});
+el("tanggal").value = new Date().toISOString().slice(0,10);
+el("danaEndpoint").value = localStorage.getItem("danaEndpoint") || "";
+
+el("nominal").addEventListener("input",function(){
+ let angka=this.value.replace(/\D/g,"");
+ this.value=angka?new Intl.NumberFormat("id-ID").format(Number(angka)):"";
+});
+
+let reminderTimer=null;
+let reminderConfig=JSON.parse(localStorage.getItem("keuanganReminder") || "null");
+let tabunganTimer=null;
+let tabunganConfig=JSON.parse(localStorage.getItem("tabunganReminder") || "null");
+
+el("tabunganNominal").addEventListener("input",function(){
+ let angka=this.value.replace(/\D/g,"");
+ this.value=angka?new Intl.NumberFormat("id-ID").format(Number(angka)):"";
+});
+
+function toast(pesan){
+ let element=el("toast");
+ element.textContent=pesan;
+ element.classList.add("show");
+ clearTimeout(element._hideTimer);
+ element._hideTimer=setTimeout(()=>element.classList.remove("show"),3200);
+}
+
+async function aktifkanPengingat(){
+ if(!("Notification" in window))return toast("Browser ini tidak mendukung notifikasi.");
+
+ let permission=Notification.permission;
+ if(permission==="default")permission=await Notification.requestPermission();
+ if(permission!=="granted")return toast("Izin notifikasi ditolak.");
+
+ let waktu=el("reminderTime").value;
+ let pesan=el("reminderMessage").value.trim() || "Catat transaksi keuangan hari ini";
+ if(!waktu)return toast("Pilih waktu pengingat.");
+
+ reminderConfig={aktif:true,waktu:waktu,pesan:pesan,tanggalTerakhir:""};
+ localStorage.setItem("keuanganReminder",JSON.stringify(reminderConfig));
+ mulaiPengingat();
+ toast("Pengingat harian berhasil diaktifkan.");
+}
+
+function nonaktifkanPengingat(){
+ reminderConfig={aktif:false,waktu:"20:00",pesan:"Catat transaksi keuangan hari ini",tanggalTerakhir:""};
+ localStorage.setItem("keuanganReminder",JSON.stringify(reminderConfig));
+ if(reminderTimer)clearInterval(reminderTimer);
+ reminderTimer=null;
+ tampilkanStatusPengingat();
+ toast("Pengingat harian dinonaktifkan.");
+}
+
+function tampilkanStatusPengingat(){
+ let status=el("reminderStatus");
+ if(!reminderConfig?.aktif){
+  status.textContent="Pengingat belum aktif.";
+  status.className="reminder-status off";
+  return;
+ }
+ status.textContent=`Aktif setiap hari pukul ${reminderConfig.waktu}.`;
+ status.className="reminder-status";
+ el("reminderTime").value=reminderConfig.waktu;
+ el("reminderMessage").value=reminderConfig.pesan;
+}
+
+function cekPengingat(){
+ if(!reminderConfig?.aktif||Notification.permission!=="granted")return;
+
+ let sekarang=new Date();
+ let waktuSekarang=String(sekarang.getHours()).padStart(2,"0")+":"+String(sekarang.getMinutes()).padStart(2,"0");
+ let tanggalSekarang=sekarang.toISOString().slice(0,10);
+
+ if(waktuSekarang===reminderConfig.waktu&&reminderConfig.tanggalTerakhir!==tanggalSekarang){
+  let notification=new Notification("Pengingat KeuanganKu",{body:reminderConfig.pesan,tag:"keuanganku-reminder"});
+  reminderConfig.tanggalTerakhir=tanggalSekarang;
+  localStorage.setItem("keuanganReminder",JSON.stringify(reminderConfig));
+  notification.onclick=()=>window.focus();
+ }
+}
+
+function mulaiPengingat(){
+ if(reminderTimer)clearInterval(reminderTimer);
+ tampilkanStatusPengingat();
+ if(!reminderConfig?.aktif)return;
+ cekPengingat();
+ reminderTimer=setInterval(cekPengingat,30000);
+}
+
+async function aktifkanPengingatTabungan(){
+ if(!("Notification" in window))return toast("Browser ini tidak mendukung notifikasi.");
+
+ let permission=Notification.permission;
+ if(permission==="default")permission=await Notification.requestPermission();
+ if(permission!=="granted")return toast("Izin notifikasi ditolak.");
+
+ let waktu=el("tabunganTime").value;
+ let nominal=Number(el("tabunganNominal").value.replace(/\D/g,""));
+ if(!waktu)return toast("Pilih waktu pengingat tabungan.");
+ if(nominal<=0)return toast("Masukkan nominal tabungan.");
+
+ tabunganConfig={
+  aktif:true,
+  waktu:waktu,
+  nominal:nominal,
+  tanggalTerakhir:""
+ };
+ localStorage.setItem("tabunganReminder",JSON.stringify(tabunganConfig));
+ mulaiPengingatTabungan();
+ toast("Pengingat tabungan berhasil diaktifkan.");
+}
+
+function nonaktifkanPengingatTabungan(){
+ tabunganConfig={aktif:false,waktu:"21:00",nominal:0,tanggalTerakhir:""};
+ localStorage.setItem("tabunganReminder",JSON.stringify(tabunganConfig));
+ if(tabunganTimer)clearInterval(tabunganTimer);
+ tabunganTimer=null;
+ tampilkanStatusTabungan();
+ toast("Pengingat tabungan dinonaktifkan.");
+}
+
+function tampilkanStatusTabungan(){
+ let status=el("tabunganStatus");
+ if(!tabunganConfig?.aktif){
+  status.textContent="Pengingat tabungan belum aktif.";
+  status.className="reminder-status off";
+  return;
+ }
+ status.textContent=`Aktif setiap hari pukul ${tabunganConfig.waktu} untuk ${uang(tabunganConfig.nominal)}.`;
+ status.className="reminder-status";
+ el("tabunganTime").value=tabunganConfig.waktu;
+ el("tabunganNominal").value=new Intl.NumberFormat("id-ID").format(tabunganConfig.nominal);
+}
+
+function cekPengingatTabungan(){
+ if(!tabunganConfig?.aktif||Notification.permission!=="granted")return;
+
+ let sekarang=new Date();
+ let waktuSekarang=String(sekarang.getHours()).padStart(2,"0")+":"+String(sekarang.getMinutes()).padStart(2,"0");
+ let tanggalSekarang=sekarang.toISOString().slice(0,10);
+
+ if(waktuSekarang===tabunganConfig.waktu&&tabunganConfig.tanggalTerakhir!==tanggalSekarang){
+  let nominal=uang(tabunganConfig.nominal);
+  let notification=new Notification("Saatnya Mengisi Tabungan",{body:`Sisihkan dan catat tabungan sebesar ${nominal} hari ini.`,tag:"keuanganku-tabungan"});
+  tabunganConfig.tanggalTerakhir=tanggalSekarang;
+  localStorage.setItem("tabunganReminder",JSON.stringify(tabunganConfig));
+  notification.onclick=()=>window.focus();
+ }
+}
+
+function mulaiPengingatTabungan(){
+ if(tabunganTimer)clearInterval(tabunganTimer);
+ tampilkanStatusTabungan();
+ if(!tabunganConfig?.aktif)return;
+ cekPengingatTabungan();
+ tabunganTimer=setInterval(cekPengingatTabungan,30000);
+}
+
+function simpan(){
+ localStorage.setItem("keuanganku",JSON.stringify(data));
+ tampilkan();
+}
+
+function ubahJenis(t){
+ jenis=t;
+ el("btnMasuk").classList.toggle("active",t==="masuk");
+ el("btnKeluar").classList.toggle("active",t==="keluar");
+}
+
+el("form").addEventListener("submit",function(e){
+ e.preventDefault();
+
+ let nominal=Number(el("nominal").value.replace(/\D/g,""));
+ if(nominal<=0)return alert("Nominal tidak valid.");
+
+ data.unshift({
+ id:Date.now()+Math.random(),
+ jenis:jenis,
+ nominal:nominal,
+ kategori:el("kategori").value,
+ keterangan:el("keterangan").value || "Tanpa keterangan",
+ sumber:el("sumber").value,
+ tanggal:el("tanggal").value
+ });
+
+ simpan();
+ this.reset();
+ el("tanggal").value=new Date().toISOString().slice(0,10);
+ alert("Transaksi berhasil disimpan!");
+});
+
+function hapus(id){
+ if(confirm("Hapus transaksi ini?")){
+ data=data.filter(x=>String(x.id)!==String(id));
+ simpan();
+ }
+}
+
+function aman(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function tampilkan(){
+ let totalMasuk=data.filter(x=>x.jenis==="masuk")
+ .reduce((a,b)=>a+Number(b.nominal),0);
+
+ let totalKeluar=data.filter(x=>x.jenis==="keluar")
+ .reduce((a,b)=>a+Number(b.nominal),0);
+
+ el("saldo").textContent=uang(totalMasuk-totalKeluar);
+ el("masuk").textContent=uang(totalMasuk);
+ el("keluar").textContent=uang(totalKeluar);
+ el("jumlah").textContent=data.length;
+
+ let bulan=new Date().toISOString().slice(0,7);
+ let bulanan=data.filter(x=>x.tanggal.startsWith(bulan));
+
+ let m=bulanan.filter(x=>x.jenis==="masuk")
+ .reduce((a,b)=>a+Number(b.nominal),0);
+
+ let k=bulanan.filter(x=>x.jenis==="keluar")
+ .reduce((a,b)=>a+Number(b.nominal),0);
+
+ let max=Math.max(m,k,1);
+ el("grafikMasuk").textContent=uang(m);
+ el("grafikKeluar").textContent=uang(k);
+ el("barMasuk").style.width=(m/max*100)+"%";
+ el("barKeluar").style.width=(k/max*100)+"%";
+
+ let filter=el("filter").value;
+ let cari=el("cari").value.toLowerCase();
+
+ let hasil=data.filter(x=>{
+ let cocok=filter==="semua" || x.jenis===filter;
+ let teks=(x.keterangan+" "+x.kategori+" "+x.sumber).toLowerCase();
+ return cocok && teks.includes(cari);
+ });
+
+ el("riwayat").innerHTML=hasil.map(x=>`
+ <tr>
+ <td>${aman(x.tanggal)}</td>
+ <td>${aman(x.keterangan)}<br><small>${aman(x.kategori)}</small></td>
+ <td>${aman(x.sumber)}</td>
+ <td class="${x.jenis==="masuk"?"green":"red"}">
+ ${x.jenis==="masuk"?"+":"-"}${uang(x.nominal)}
+ </td>
+ <td><button class="delete" onclick="hapus('${x.id}')">Hapus</button></td>
+ </tr>
+ `).join("");
+
+ el("kosong").style.display=hasil.length?"none":"block";
+}
+
+function exportCSV(){
+ let rows=[["Tanggal","Jenis","Nominal","Kategori","Keterangan","Sumber"]];
+ data.forEach(x=>rows.push([
+ x.tanggal,x.jenis,x.nominal,x.kategori,x.keterangan,x.sumber
+ ]));
+
+ let csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");
+ unduh("laporan-keuangan.csv","\uFEFF"+csv);
+}
+
+function backup(){
+ unduh("backup-keuangan.json",JSON.stringify(data,null,2));
+}
+
+function unduh(nama,isi){
+ let a=document.createElement("a");
+ let url=URL.createObjectURL(new Blob([isi],{type:"text/plain"}));
+ a.href=url;a.download=nama;a.click();
+ URL.revokeObjectURL(url);
+}
+
+function importDANA(){
+ let file=el("fileCSV").files[0];
+ if(!file)return alert("Pilih file CSV terlebih dahulu.");
+
+ let reader=new FileReader();
+
+ reader.onload=function(){
+ try{
+ let lines=String(reader.result).split(/\r?\n/).filter(x=>x.trim());
+ let rows=lines.map(line=>line.split(",").map(x=>x.replace(/^"|"$/g,"").trim()));
+
+ let head=rows.shift().map(x=>x.toLowerCase());
+ let idx=keys=>head.findIndex(h=>keys.some(k=>h.includes(k)));
+
+ let tanggal=idx(["tanggal","date"]);
+ let nominal=idx(["nominal","amount","jumlah"]);
+ let ket=idx(["keterangan","deskripsi","description","detail"]);
+ let jenisCol=idx(["jenis","type","status"]);
+
+ if(nominal<0)throw Error("Kolom nominal tidak ditemukan.");
+
+ let count=0;
+
+ rows.forEach(r=>{
+ let n=Number((r[nominal]||"").replace(/[^\d]/g,""));
+ if(!n)return;
+
+ let desc=ket>=0?(r[ket]||"Transaksi DANA"):"Transaksi DANA";
+ let status=jenisCol>=0?(r[jenisCol]||""):"";
+ let tipe=/keluar|debit|bayar|kirim|payment|out/i.test(status+" "+desc)?"keluar":"masuk";
+
+ let t=tanggal>=0?r[tanggal]:"";
+ if(/^\d{2}\/\d{2}\/\d{4}$/.test(t)){
+ let [d,m,y]=t.split("/");
+ t=`${y}-${m}-${d}`;
+ }
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(t))
+ t=new Date().toISOString().slice(0,10);
+
+ data.unshift({
+ id:Date.now()+Math.random(),
+ jenis:tipe,
+ nominal:n,
+ kategori:"DANA",
+ keterangan:desc,
+ sumber:"DANA",
+ tanggal:t
+ });
+ count++;
+ });
+
+ simpan();
+ el("statusImport").textContent=count+" transaksi berhasil dibaca. Periksa kembali hasil impor.";
+ }catch(e){
+ el("statusImport").textContent="Gagal: "+e.message;
+ }
+ };
+ reader.readAsText(file);
+}
+
+function statusSinkron(pesan,kategori=""){
+ let status=el("statusSinkron");
+ status.textContent=pesan;
+ status.className="muted sync-status "+kategori;
+}
+
+async function sinkronDANA(){
+ let endpoint=el("danaEndpoint").value.trim();
+ if(!endpoint)return alert("Masukkan URL endpoint sinkronisasi.");
+
+ let savedDate=localStorage.getItem("danaLastSync") || "";
+ localStorage.setItem("danaEndpoint",endpoint);
+ statusSinkron("Menghubungkan ke server...");
+
+ try{
+ let response=await fetch(endpoint,{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({from:savedDate,sumber:"DANA"})
+ });
+
+ let payload=await response.json();
+ if(!response.ok)throw Error(payload.message || "Sinkronisasi gagal.");
+
+ let rows=Array.isArray(payload)?payload:
+  (payload.transactions || payload.data || payload.result || []);
+ if(!Array.isArray(rows))throw Error("Format respons endpoint tidak valid.");
+
+ let count=0;
+ let duplicateKeys=new Set(data.map(x=>x.externalId).filter(Boolean));
+
+ rows.forEach(row=>{
+  let externalId=String(row.id || row.transactionId || row.referenceId || "");
+  if(externalId && duplicateKeys.has(externalId))return;
+
+  let nominal=Number(String(row.nominal || row.amount || row.jumlah || 0).replace(/[^\d]/g,""));
+  if(!nominal)return;
+
+  let tanggal=String(row.tanggal || row.date || row.transactionDate || "").slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(tanggal)){
+   let parsed=new Date(tanggal);
+   tanggal=Number.isNaN(parsed.getTime())?
+    new Date().toISOString().slice(0,10):parsed.toISOString().slice(0,10);
+  }
+
+  let jenisText=String(row.jenis || row.type || row.status || row.direction || "");
+  let deskripsi=String(row.keterangan || row.description || row.detail || "Transaksi DANA");
+  let tipe=/keluar|debit|bayar|kirim|payment|out/i.test(jenisText+" "+deskripsi)?"keluar":"masuk";
+
+  data.unshift({
+   id:Date.now()+Math.random(),
+   externalId:externalId || undefined,
+   jenis:tipe,
+   nominal:nominal,
+   kategori:"DANA",
+   keterangan:deskripsi,
+   sumber:"DANA",
+   tanggal:tanggal
+  });
+  if(externalId)duplicateKeys.add(externalId);
+  count++;
+ });
+
+ localStorage.setItem("danaLastSync",new Date().toISOString());
+ simpan();
+ statusSinkron(count+" transaksi baru berhasil disinkronkan.","success");
+ }catch(error){
+ statusSinkron("Gagal: "+error.message,"error");
+ }
+}
+
+tampilkan();
+mulaiPengingat();
+mulaiPengingatTabungan();
+</script>
+</body>
+</html>
